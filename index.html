@@ -1,0 +1,1091 @@
+
+<!DOCTYPE html>
+<html lang="kk" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>PythonКурсы — Онлайн Оқу Платформасы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=voLfSm4KX70SxOV5siWxcPmeY5xZvxRiYowyg5HfvTx6gh2hBqrNVlh0KfCKaDu_GsQvNX9xzncqsC-DEXlqJA" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        :root[data-theme="dark"] {
+            --bg-deep:#060d1f; --bg-mid:#0c1a35; --bg-card:rgba(255,255,255,0.03);
+            --blue:#2563eb; --blue-light:#3b82f6; --cyan:#06b6d4; --green:#10b981;
+            --green-glow:rgba(16,185,129,0.3); --amber:#f59e0b;
+            --text:#ffffff; --text-muted:rgba(255,255,255,0.55); --text-sub:rgba(255,255,255,0.45);
+            --border:rgba(255,255,255,0.08); --border-hover:rgba(37,99,235,0.3);
+            --header-bg:rgba(6,13,31,0.9); --card-border:rgba(255,255,255,0.08);
+            --lesson-bg:rgba(255,255,255,0.03); --lesson-hover:rgba(255,255,255,0.06);
+            --content-bg:rgba(6,13,31,0.7); --code-bg:rgba(0,0,0,0.4);
+            --note-bg:rgba(37,99,235,0.1); --note-border:rgba(37,99,235,0.25);
+            --tip-bg:rgba(255,255,255,0.04); --tip-border:rgba(255,255,255,0.07);
+            --tab-active-bg:rgba(6,182,212,0.06); --shadow:0 8px 32px rgba(6,13,31,0.4);
+            --option-bg:rgba(255,255,255,0.03); --option-border:rgba(255,255,255,0.1);
+            --stat-bg:rgba(255,255,255,0.06); --stat-border:rgba(255,255,255,0.1);
+            --hero-text:#fff; --feedback-bg:rgba(6,13,31,0.8); --feedback-border:rgba(37,99,235,0.2);
+            --auth-bg:rgba(6,13,31,0.95); --auth-card:rgba(255,255,255,0.05);
+        }
+        :root[data-theme="light"] {
+            --bg-deep:#f0f4ff; --bg-mid:#e8eeff; --bg-card:#ffffff;
+            --blue:#2563eb; --blue-light:#3b82f6; --cyan:#0891b2; --green:#059669;
+            --green-glow:rgba(5,150,105,0.2); --amber:#d97706;
+            --text:#0f172a; --text-muted:#475569; --text-sub:#94a3b8;
+            --border:#e2e8f0; --border-hover:rgba(37,99,235,0.4);
+            --header-bg:rgba(248,250,255,0.95); --card-border:#e2e8f0;
+            --lesson-bg:#f8faff; --lesson-hover:#eef2ff;
+            --content-bg:#ffffff; --code-bg:#1e293b; --code-text:#86efac;
+            --note-bg:rgba(37,99,235,0.05); --note-border:rgba(37,99,235,0.2);
+            --tip-bg:#f1f5f9; --tip-border:#e2e8f0;
+            --tab-active-bg:rgba(8,145,178,0.08); --shadow:0 4px 24px rgba(15,23,42,0.1);
+            --option-bg:#f8faff; --option-border:#e2e8f0;
+            --stat-bg:rgba(37,99,235,0.08); --stat-border:rgba(37,99,235,0.2);
+            --hero-text:#0f172a; --feedback-bg:#f8faff; --feedback-border:#e2e8f0;
+            --auth-bg:rgba(240,244,255,0.98); --auth-card:#ffffff;
+        }
+
+        html { scroll-behavior:smooth; }
+        body {
+            font-family:'DM Sans',sans-serif; background:var(--bg-deep);
+            color:var(--text); min-height:100vh; overflow-x:hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        [data-theme="dark"] body::before {
+            content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+            background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(37,99,235,0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(6,182,212,0.1) 0%, transparent 60%);
+        }
+
+        /* ===== AUTH ===== */
+        #auth-overlay {
+            position:fixed; inset:0; z-index:1000;
+            background:var(--auth-bg); backdrop-filter:blur(20px);
+            display:flex; align-items:center; justify-content:center; padding:20px;
+        }
+        .auth-card {
+            background:var(--auth-card); border:1px solid var(--border);
+            border-radius:24px; padding:40px 32px; max-width:420px; width:100%;
+            text-align:center; box-shadow:0 24px 64px rgba(0,0,0,0.2);
+        }
+        .auth-logo { width:64px; height:64px; margin:0 auto 20px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:32px; box-shadow:0 8px 24px rgba(37,99,235,0.35); }
+        .auth-title { font-family:'Outfit',sans-serif; font-size:26px; font-weight:800; color:var(--text); margin-bottom:8px; }
+        .auth-sub { font-size:14px; color:var(--text-muted); margin-bottom:32px; line-height:1.6; }
+        .auth-form { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
+        .auth-input { width:100%; padding:12px 16px; background:var(--option-bg); border:1px solid var(--border); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s; }
+        .auth-input:focus { border-color:var(--blue); }
+        .auth-input::placeholder { color:var(--text-sub); }
+        .auth-btn { width:100%; padding:13px; border:none; border-radius:12px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+        .auth-btn-primary { background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; box-shadow:0 4px 16px rgba(37,99,235,0.35); }
+        .auth-btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,99,235,0.45); }
+        .auth-btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+        .auth-divider { display:flex; align-items:center; gap:12px; color:var(--text-sub); font-size:12px; margin:4px 0; }
+        .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+        .google-btn { width:100%; padding:12px; background:var(--option-bg); border:1px solid var(--border); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:var(--text); cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .google-btn:hover { background:var(--lesson-hover); border-color:var(--border-hover); }
+        .google-icon { width:18px; height:18px; flex-shrink:0; }
+        .auth-switch { margin-top:16px; font-size:13px; color:var(--text-muted); }
+        .auth-switch a { color:var(--blue-light); cursor:pointer; text-decoration:none; font-weight:600; }
+        .auth-switch a:hover { text-decoration:underline; }
+        .auth-error { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:10px; padding:10px 14px; font-size:13px; color:#ef4444; margin-top:8px; display:none; }
+        .auth-success { background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:10px; padding:10px 14px; font-size:13px; color:var(--green); margin-top:8px; display:none; }
+
+        /* ===== HEADER ===== */
+        .site-header { position:sticky; top:0; z-index:200; background:var(--header-bg); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:12px 16px; }
+        .header-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+        .logo { display:flex; align-items:center; gap:10px; }
+        .logo-icon { width:38px; height:38px; flex-shrink:0; background:linear-gradient(135deg,var(--blue),var(--cyan)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 14px rgba(37,99,235,0.35); }
+        .logo-text { font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text); }
+        .logo-text span { color:var(--cyan); }
+        .header-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .stat-badge { display:flex; align-items:center; gap:5px; background:var(--stat-bg); border:1px solid var(--stat-border); border-radius:20px; padding:5px 12px; font-size:12px; color:var(--text-muted); }
+        .stat-badge strong { color:var(--text); font-size:13px; }
+
+        /* FIX: Sign out button - tooltip dropdown style */
+        .user-menu-wrap { position:relative; }
+        .user-btn { display:flex; align-items:center; gap:8px; background:var(--stat-bg); border:1px solid var(--stat-border); border-radius:20px; padding:5px 12px; cursor:pointer; font-size:12px; color:var(--text-muted); transition:all 0.2s; user-select:none; }
+        .user-btn:hover { background:var(--lesson-hover); }
+        .user-avatar { width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--cyan)); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+        .sync-indicator { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green-glow); flex-shrink:0; }
+        .sync-indicator.syncing { background:var(--amber); animation:pulse 1s infinite; }
+        .sync-indicator.offline { background:#ef4444; }
+
+        .user-dropdown { display:none; position:absolute; top:calc(100% + 8px); right:0; background:var(--bg-mid); border:1px solid var(--border); border-radius:14px; min-width:180px; box-shadow:0 8px 32px rgba(0,0,0,0.25); overflow:hidden; z-index:300; }
+        .user-dropdown.open { display:block; animation:fadeIn .15s ease; }
+        .user-dropdown-info { padding:12px 14px; border-bottom:1px solid var(--border); }
+        .user-dropdown-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .user-dropdown-email { font-size:11px; color:var(--text-sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .user-dropdown-btn { display:flex; align-items:center; gap:8px; width:100%; padding:11px 14px; background:none; border:none; font-family:'DM Sans',sans-serif; font-size:13px; color:#ef4444; cursor:pointer; transition:background .15s; text-align:left; }
+        .user-dropdown-btn:hover { background:rgba(239,68,68,0.08); }
+
+        .theme-toggle { width:42px; height:42px; border-radius:12px; border:1px solid var(--border); background:var(--stat-bg); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; color:var(--text); }
+        .theme-toggle:hover { background:var(--border-hover); transform:scale(1.05); }
+
+        /* ===== PROGRESS ===== */
+        .progress-wrap { max-width:1100px; margin:0 auto; padding:16px 16px 0; }
+        .progress-label { display:flex; justify-content:space-between; color:var(--text-muted); font-size:12px; margin-bottom:6px; }
+        .progress-label strong { color:var(--text); }
+        .progress-track { height:6px; background:var(--border); border-radius:99px; overflow:hidden; }
+        .progress-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--cyan)); border-radius:99px; transition:width 0.6s cubic-bezier(.4,0,.2,1); box-shadow:0 0 10px rgba(6,182,212,0.4); }
+
+        /* ===== MAIN ===== */
+        main { max-width:1100px; margin:0 auto; padding:24px 16px 80px; position:relative; z-index:1; }
+        .hero { text-align:center; padding:36px 0 44px; animation:fadeUp .7s ease both; }
+        .hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(37,99,235,0.12); border:1px solid rgba(37,99,235,0.25); border-radius:99px; padding:5px 14px; font-size:11px; font-weight:600; color:var(--blue-light); letter-spacing:.5px; text-transform:uppercase; margin-bottom:16px; }
+        .hero h1 { font-family:'Outfit',sans-serif; font-size:clamp(1.7rem,5vw,3.2rem); font-weight:800; color:var(--hero-text); line-height:1.15; margin-bottom:14px; }
+        .hero h1 em { font-style:normal; background:linear-gradient(135deg,#60a5fa,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .hero p { font-size:15px; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.7; }
+
+        /* ===== MODULES ===== */
+        .modules-list { display:flex; flex-direction:column; gap:16px; }
+        .module-card { background:var(--bg-card); border:1px solid var(--card-border); border-radius:20px; overflow:hidden; transition:border-color .3s, box-shadow .3s, background 0.3s; animation:fadeUp .6s ease both; }
+        .module-card.open { border-color:var(--border-hover); box-shadow:0 0 32px rgba(37,99,235,0.1); }
+        .module-header { display:flex; align-items:center; gap:14px; padding:20px; cursor:pointer; transition:background .2s; user-select:none; }
+        .module-header:hover { background:rgba(37,99,235,0.04); }
+        .module-num { width:44px; height:44px; flex-shrink:0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:'Outfit',sans-serif; font-size:16px; font-weight:800; color:#fff; }
+        .module-num.m1{background:linear-gradient(135deg,#2563eb,#3b82f6)}
+        .module-num.m2{background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
+        .module-num.m3{background:linear-gradient(135deg,#0891b2,#06b6d4)}
+        .module-info { flex:1; min-width:0; }
+        .module-title { font-family:'Outfit',sans-serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:3px; }
+        .module-sub { font-size:12px; color:var(--text-sub); }
+        .module-progress-mini { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .module-prog-bar { width:64px; height:4px; background:var(--border); border-radius:99px; overflow:hidden; }
+        .module-prog-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--cyan)); border-radius:99px; transition:width .5s; }
+        .module-prog-text { font-size:11px; color:var(--text-sub); white-space:nowrap; }
+        .module-chevron { font-size:16px; color:var(--text-sub); transition:transform .3s; flex-shrink:0; }
+        .module-card.open .module-chevron { transform:rotate(180deg); }
+        .lessons-body { max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.4,0,.2,1); border-top:0px solid var(--border); }
+        .module-card.open .lessons-body { max-height:99999px; border-top-width:1px; }
+        .lessons-inner { padding:8px 12px 12px; }
+
+        .lesson-item { border-radius:12px; margin-bottom:8px; overflow:hidden; }
+        .lesson-row { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--lesson-bg); border:1px solid var(--card-border); border-radius:12px; cursor:pointer; transition:background .2s, border-color .2s; }
+        .lesson-row:hover:not(.locked-row) { background:var(--lesson-hover); border-color:var(--border-hover); }
+        .locked-lesson .lesson-row { cursor:default; opacity:0.6; }
+        .lesson-num-badge { width:30px; height:30px; flex-shrink:0; background:rgba(37,99,235,0.12); border:1px solid rgba(37,99,235,0.25); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--blue-light); font-family:'Outfit',sans-serif; }
+        .lesson-item.done .lesson-num-badge { background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3); color:var(--green); }
+        .lesson-title-text { flex:1; font-size:13.5px; font-weight:500; color:var(--text); min-width:0; }
+        .start-btn { padding:6px 14px; background:linear-gradient(135deg,var(--blue),var(--blue-light)); border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#fff; cursor:pointer; transition:transform .15s, box-shadow .15s; box-shadow:0 3px 12px rgba(37,99,235,0.3); white-space:nowrap; flex-shrink:0; }
+        .start-btn:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(37,99,235,0.4); }
+        .lock-icon { font-size:15px; color:var(--text-sub); flex-shrink:0; }
+        .completed-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); border-radius:99px; padding:4px 10px; font-size:11px; font-weight:700; color:var(--green); flex-shrink:0; }
+
+        .lesson-content { display:none; background:var(--content-bg); border:1px solid var(--border-hover); border-radius:12px; margin-top:6px; overflow:hidden; animation:slideDown .35s ease; }
+        .lesson-item.active .lesson-content { display:block; }
+        .content-tabs { display:flex; gap:2px; padding:14px 16px 0; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
+        .content-tabs::-webkit-scrollbar { display:none; }
+        .tab-btn { padding:7px 14px; background:none; border:none; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:var(--text-sub); cursor:pointer; border-radius:8px 8px 0 0; border-bottom:2px solid transparent; white-space:nowrap; transition:color .2s, background .2s; }
+        .tab-btn.active { color:var(--cyan); border-bottom-color:var(--cyan); background:var(--tab-active-bg); }
+        .tab-panel { display:none; padding:20px 16px 16px; }
+        .tab-panel.active { display:block; animation:fadeIn .3s ease; }
+
+        .notes-content { color:var(--text); font-size:14px; line-height:1.8; }
+        .notes-content h3 { font-family:'Outfit',sans-serif; font-size:16px; font-weight:700; color:var(--text); margin:18px 0 8px; display:flex; align-items:center; gap:7px; }
+        .notes-content p { margin-bottom:10px; color:var(--text-muted); }
+        .notes-content ul { padding-left:18px; margin:8px 0; color:var(--text-muted); }
+        .notes-content li { margin-bottom:5px; }
+        .notes-content b { color:var(--text); }
+        .code-block { background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:10px 0; font-family:'Fira Code',monospace; font-size:12.5px; color:#86efac; line-height:1.7; overflow-x:auto; white-space:pre; }
+        [data-theme="light"] .code-block { color:#16a34a; }
+        .note-highlight { display:flex; align-items:flex-start; gap:10px; background:var(--note-bg); border:1px solid var(--note-border); border-left:3px solid var(--blue-light); border-radius:8px; padding:12px 14px; margin:10px 0; font-size:13px; color:var(--text-muted); }
+        .tip-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px; margin:10px 0; }
+        .tip-card { background:var(--tip-bg); border:1px solid var(--tip-border); border-radius:10px; padding:10px 12px; }
+        .tip-card .tc-title { font-size:12px; font-weight:600; color:var(--text); margin-bottom:3px; }
+        .tip-card .tc-desc { font-size:11px; color:var(--text-sub); line-height:1.5; }
+
+        .nav-btn-row { display:flex; justify-content:flex-end; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+        .nav-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:10px; border:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+        .nav-btn-primary { background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; box-shadow:0 4px 16px rgba(37,99,235,0.3); }
+        .nav-btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,99,235,0.4); }
+        .nav-btn-green { background:linear-gradient(135deg,var(--green),#34d399); color:#fff; box-shadow:0 4px 16px rgba(16,185,129,0.3); }
+        .nav-btn-green:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(16,185,129,0.4); }
+
+        .video-wrap { position:relative; padding-bottom:56.25%; border-radius:12px; overflow:hidden; background:#000; }
+        .video-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+
+        /* ===== TEST ===== */
+        .test-section { padding:4px 0; }
+        .test-question { margin-bottom:16px; background:var(--option-bg); border:1px solid var(--option-border); border-radius:12px; padding:16px; }
+        .test-q-num { display:inline-block; background:rgba(37,99,235,0.15); color:var(--blue-light); font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; margin-bottom:7px; font-family:'Outfit',sans-serif; }
+        .test-q-text { font-size:14px; font-weight:600; color:var(--text); margin-bottom:12px; line-height:1.5; }
+        .options-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+        @media(max-width:480px) { .options-grid { grid-template-columns:1fr; } }
+        .option-btn { display:flex; align-items:center; gap:9px; padding:9px 12px; background:var(--option-bg); border:1.5px solid var(--option-border); border-radius:10px; cursor:pointer; transition:all .2s; text-align:left; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text-muted); }
+        .option-btn.selected { background:rgba(37,99,235,0.12); border-color:var(--blue); color:var(--text); }
+        .option-btn.correct { background:rgba(16,185,129,0.12); border-color:var(--green); color:var(--text); }
+        .option-btn.wrong { background:rgba(239,68,68,0.1); border-color:#ef4444; color:var(--text-muted); }
+        .option-key { font-weight:700; color:var(--text-sub); min-width:16px; font-size:11px; }
+        .test-submit-btn { width:100%; padding:12px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border:none; border-radius:10px; font-family:'Outfit',sans-serif; font-size:14px; font-weight:700; color:#fff; cursor:pointer; margin-top:14px; box-shadow:0 4px 16px rgba(37,99,235,0.3); }
+        .test-submit-btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .test-result { display:none; margin-top:14px; border-radius:12px; padding:20px; animation:fadeIn .4s ease; }
+        .test-result.pass { background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); }
+        .test-result.fail { background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); }
+        .result-score { font-family:'Outfit',sans-serif; font-size:28px; font-weight:800; color:var(--text); margin-bottom:4px; }
+        .result-title { font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:6px; }
+        .result-sub { font-size:13px; color:var(--text-muted); margin-bottom:14px; }
+        .feedback-section { margin-top:14px; border-radius:12px; overflow:hidden; border:1px solid var(--feedback-border); background:var(--feedback-bg); }
+        .feedback-header { padding:12px 16px; background:rgba(37,99,235,0.08); font-family:'Outfit',sans-serif; font-size:14px; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); }
+        .feedback-item { padding:12px 16px; border-bottom:1px solid var(--border); }
+        .feedback-item:last-child { border-bottom:none; }
+        .feedback-q { font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px; }
+        .feedback-wrong { display:flex; align-items:center; gap:6px; font-size:12px; color:#ef4444; margin-bottom:3px; }
+        .feedback-correct { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--green); margin-bottom:6px; }
+        .feedback-tip { font-size:12px; color:var(--text-muted); background:var(--note-bg); border-left:3px solid var(--blue-light); padding:8px 12px; border-radius:0 6px 6px 0; }
+        .retry-btn { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; background:var(--option-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:background .2s; }
+        .retry-btn:hover { background:var(--lesson-hover); }
+
+        /* ===== TOAST ===== */
+        .toast { position:fixed; bottom:24px; right:24px; z-index:500; background:var(--bg-mid); border:1px solid var(--border); border-radius:12px; padding:12px 18px; font-size:13px; color:var(--text); display:flex; align-items:center; gap:8px; box-shadow:0 8px 24px rgba(0,0,0,0.2); animation:slideUp .3s ease; max-width:280px; }
+        .toast.success { border-color:rgba(16,185,129,0.3); }
+        .toast.error { border-color:rgba(239,68,68,0.3); }
+
+        /* ===== CERTIFICATE ===== */
+        #cert-banner { display:none; margin-bottom:24px; background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(6,182,212,0.08)); border:1px solid rgba(16,185,129,0.3); border-radius:20px; padding:28px 24px; text-align:center; position:relative; overflow:hidden; }
+        #cert-banner::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(16,185,129,0.1) 0%,transparent 70%); pointer-events:none; }
+        .cert-banner-icon { font-size:48px; margin-bottom:12px; display:block; }
+        .cert-banner-title { font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:var(--text); margin-bottom:6px; }
+        .cert-banner-sub { font-size:14px; color:var(--text-muted); margin-bottom:20px; }
+        .cert-download-btn { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--green),#34d399); border:none; border-radius:14px; padding:14px 32px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:700; color:#fff; cursor:pointer; box-shadow:0 6px 24px rgba(16,185,129,0.35); transition:all 0.2s; }
+        .cert-download-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(16,185,129,0.45); }
+        #cert-modal { display:none; position:fixed; inset:0; z-index:900; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px; }
+        #cert-modal.show { display:flex; }
+        .cert-modal-inner { background:#fff; border-radius:20px; max-width:780px; width:100%; overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,0.4); max-height:90vh; overflow-y:auto; }
+        .cert-modal-actions { display:flex; gap:12px; padding:14px 20px; background:#f8faff; border-top:1px solid #e2e8f0; justify-content:flex-end; flex-wrap:wrap; position:sticky; bottom:0; }
+        .cert-action-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; border:none; font-family:'Outfit',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+        .cert-action-print { background:linear-gradient(135deg,#2563eb,#06b6d4); color:#fff; box-shadow:0 4px 14px rgba(37,99,235,0.3); }
+        .cert-action-print:hover { transform:translateY(-1px); }
+        .cert-action-close { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+        .cert-action-close:hover { background:#e2e8f0; }
+        #certificate-content { padding:48px 52px; background:#fff; font-family:'Outfit',sans-serif; position:relative; overflow:hidden; }
+        .cert-border-outer { position:absolute; inset:12px; border:2px solid #2563eb; border-radius:12px; opacity:0.15; pointer-events:none; }
+        .cert-border-inner { position:absolute; inset:18px; border:1px solid #06b6d4; border-radius:8px; opacity:0.1; pointer-events:none; }
+        .cert-corner { position:absolute; width:32px; height:32px; border-color:#2563eb; border-style:solid; opacity:0.4; }
+        .cert-corner.tl { top:20px; left:20px; border-width:2px 0 0 2px; border-radius:4px 0 0 0; }
+        .cert-corner.tr { top:20px; right:20px; border-width:2px 2px 0 0; border-radius:0 4px 0 0; }
+        .cert-corner.bl { bottom:20px; left:20px; border-width:0 0 2px 2px; border-radius:0 0 0 4px; }
+        .cert-corner.br { bottom:20px; right:20px; border-width:0 2px 2px 0; border-radius:0 0 4px 0; }
+        .cert-bg-deco { position:absolute; right:-20px; bottom:-20px; font-size:160px; opacity:0.04; user-select:none; pointer-events:none; }
+        .cert-header { text-align:center; margin-bottom:24px; }
+        .cert-logo-row { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:8px; }
+        .cert-logo-box { width:44px; height:44px; background:linear-gradient(135deg,#2563eb,#06b6d4); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; }
+        .cert-site-name { font-size:22px; font-weight:800; color:#0f172a; }
+        .cert-site-name span { color:#06b6d4; }
+        .cert-divider-line { width:60px; height:3px; margin:10px auto; background:linear-gradient(90deg,#2563eb,#06b6d4); border-radius:99px; }
+        .cert-of-completion { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#64748b; margin-bottom:4px; }
+        .cert-main-title { font-size:30px; font-weight:900; color:#0f172a; letter-spacing:-0.5px; }
+        .cert-presents { font-size:13px; color:#64748b; margin:18px 0 6px; text-align:center; }
+        .cert-student-name { font-size:34px; font-weight:800; color:#2563eb; margin:4px 0 16px; font-style:italic; letter-spacing:-0.5px; text-align:center; }
+        .cert-body-text { font-size:13px; color:#475569; line-height:1.7; max-width:480px; margin:0 auto 16px; text-align:center; }
+        .cert-course-name { font-size:16px; font-weight:700; color:#0f172a; margin:4px 0; text-align:center; }
+        .cert-stats-row { display:flex; justify-content:center; gap:24px; margin:20px 0; }
+        .cert-stat { text-align:center; }
+        .cert-stat-num { font-size:24px; font-weight:800; color:#2563eb; }
+        .cert-stat-label { font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#94a3b8; margin-top:2px; }
+        .cert-footer { display:flex; justify-content:space-between; align-items:flex-end; margin-top:24px; padding-top:20px; border-top:1px solid #e2e8f0; }
+        .cert-sign-block { text-align:center; }
+        .cert-sign-line { width:120px; height:1px; background:#94a3b8; margin:0 auto 6px; }
+        .cert-sign-name { font-size:11px; font-weight:600; color:#475569; }
+        .cert-sign-title { font-size:10px; color:#94a3b8; }
+        .cert-seal { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#2563eb,#06b6d4); display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; text-align:center; box-shadow:0 4px 16px rgba(37,99,235,0.3); }
+        .cert-seal-icon { font-size:22px; }
+        .cert-seal-text { font-size:8px; font-weight:700; letter-spacing:0.5px; margin-top:1px; }
+        .cert-date-block { text-align:right; }
+        .cert-date-label { font-size:10px; color:#94a3b8; margin-bottom:2px; }
+        .cert-date-val { font-size:12px; font-weight:600; color:#475569; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+        @media(max-width:640px) {
+            .header-right .stat-badge:first-child { display:none; }
+            .module-progress-mini { display:none; }
+            .hero { padding:24px 0 32px; }
+            #certificate-content { padding:28px 20px; }
+            .cert-stats-row { gap:14px; }
+            .cert-student-name { font-size:24px; }
+            .cert-footer { flex-direction:column; gap:16px; align-items:center; }
+        }
+        @media print {
+            body * { visibility:hidden; }
+            #certificate-content, #certificate-content * { visibility:visible; }
+            #certificate-content { position:fixed; inset:0; padding:32px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay">
+    <div class="auth-card">
+        <div class="auth-logo">🐍</div>
+        <div class="auth-title">PythonКурсы</div>
+        <div class="auth-sub" id="auth-subtitle">Оқуды бастау үшін кіріңіз.<br>Прогресіңіз бұлтта сақталады ☁️</div>
+        <div id="login-form">
+            <div class="auth-form">
+                <input class="auth-input" type="email" id="login-email" placeholder="Email">
+                <input class="auth-input" type="password" id="login-password" placeholder="Пароль">
+                <button class="auth-btn auth-btn-primary" onclick="loginWithEmail()" id="login-btn">Кіру →</button>
+            </div>
+            <div class="auth-divider">немесе</div>
+            <button class="google-btn" onclick="loginWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Google-мен кіру
+            </button>
+            <div class="auth-error" id="login-error"></div>
+            <div class="auth-switch">Аккаунт жоқ па? <a onclick="showRegister()">Тіркелу</a></div>
+        </div>
+        <div id="register-form" style="display:none">
+            <div class="auth-form">
+                <input class="auth-input" type="text" id="reg-name" placeholder="Атыңыз">
+                <input class="auth-input" type="email" id="reg-email" placeholder="Email">
+                <input class="auth-input" type="password" id="reg-password" placeholder="Пароль (кем дегенде 6 символ)">
+                <button class="auth-btn auth-btn-primary" onclick="registerWithEmail()" id="reg-btn">Тіркелу →</button>
+            </div>
+            <div class="auth-divider">немесе</div>
+            <button class="google-btn" onclick="loginWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Google-мен тіркелу
+            </button>
+            <div class="auth-error" id="reg-error"></div>
+            <div class="auth-success" id="reg-success"></div>
+            <div class="auth-switch">Аккаунт бар ма? <a onclick="showLogin()">Кіру</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">🐍</div>
+            <div class="logo-text">Python<span>Курсы</span></div>
+        </div>
+        <div class="header-right">
+            <div class="stat-badge">📚 <strong id="hdr-lessons">0</strong>&nbsp;/&nbsp;15 сабақ</div>
+            <div class="stat-badge">🏆 <strong id="hdr-pct">0%</strong></div>
+            <!-- FIX: dropdown menu instead of direct click -->
+            <div class="user-menu-wrap" id="user-menu-wrap">
+                <div class="user-btn" id="user-btn" onclick="toggleUserDropdown()">
+                    <div class="user-avatar" id="user-avatar">?</div>
+                    <span id="user-name-short">...</span>
+                    <div class="sync-indicator" id="sync-dot"></div>
+                </div>
+                <div class="user-dropdown" id="user-dropdown">
+                    <div class="user-dropdown-info">
+                        <div class="user-dropdown-name" id="dropdown-name">—</div>
+                        <div class="user-dropdown-email" id="dropdown-email">—</div>
+                    </div>
+                    <button class="user-dropdown-btn" onclick="handleSignOut()">🚪 Шығу</button>
+                </div>
+            </div>
+            <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Тема ауыстыру">🌙</button>
+        </div>
+    </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+    <div class="progress-label">
+        <span>Жалпы прогресс</span>
+        <strong id="prog-label">0 / 15 сабақ аяқталды</strong>
+    </div>
+    <div class="progress-track">
+        <div class="progress-fill" id="main-progress" style="width:0%"></div>
+    </div>
+</div>
+
+<!-- CERTIFICATE MODAL -->
+<div id="cert-modal">
+    <div class="cert-modal-inner">
+        <div id="certificate-content">
+            <div class="cert-border-outer"></div><div class="cert-border-inner"></div>
+            <div class="cert-corner tl"></div><div class="cert-corner tr"></div>
+            <div class="cert-corner bl"></div><div class="cert-corner br"></div>
+            <div class="cert-bg-deco">🐍</div>
+            <div class="cert-header">
+                <div class="cert-logo-row"><div class="cert-logo-box">🐍</div><div class="cert-site-name">Python<span>Курсы</span></div></div>
+                <div class="cert-divider-line"></div>
+                <div class="cert-of-completion">Аяқтау куәлігі</div>
+                <div class="cert-main-title">СЕРТИФИКАТ</div>
+            </div>
+            <div class="cert-presents">Бұл сертификат мынаған берілді:</div>
+            <div class="cert-student-name" id="cert-name">—</div>
+            <div class="cert-body-text">Python бағдарламалау тілі бойынша онлайн курсты табысты аяқтағандығын растайды. Курс барысында теориялық білім, бейнедәрістер және тесттер арқылы Python тілінің негіздері толық меңгерілді.</div>
+            <div class="cert-course-name">🐍 Python бағдарламалауды нөлден үйрен</div>
+            <div class="cert-stats-row">
+                <div class="cert-stat"><div class="cert-stat-num">3</div><div class="cert-stat-label">Модуль</div></div>
+                <div class="cert-stat"><div class="cert-stat-num">15</div><div class="cert-stat-label">Сабақ</div></div>
+                <div class="cert-stat"><div class="cert-stat-num">150</div><div class="cert-stat-label">Тест сұрағы</div></div>
+            </div>
+            <div class="cert-footer">
+                <div class="cert-sign-block"><div class="cert-sign-line"></div><div class="cert-sign-name">PythonКурсы</div><div class="cert-sign-title">Онлайн оқу платформасы</div></div>
+                <div class="cert-seal"><div class="cert-seal-icon">🏆</div><div class="cert-seal-text">ӨТТІ</div></div>
+                <div class="cert-date-block"><div class="cert-date-label">Берілген күні</div><div class="cert-date-val" id="cert-date">—</div></div>
+            </div>
+        </div>
+        <div class="cert-modal-actions">
+            <button class="cert-action-btn cert-action-close" onclick="closeCertModal()">✕ Жабу</button>
+            <button class="cert-action-btn cert-action-print" onclick="printCertificate()">⬇️ PDF / Басып шығару</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<main>
+    <div class="hero">
+        <div class="hero-badge">🎓 Онлайн курс</div>
+        <h1>Python бағдарламалауды<br><em>нөлден үйрен</em></h1>
+        <p>Интерактивті сабақтар, видео дәрістер және тесттермен Python тілінің негіздерін меңгер</p>
+    </div>
+    <div id="cert-banner">
+        <span class="cert-banner-icon">🎉</span>
+        <div class="cert-banner-title">Құттықтаймыз! Курсты толық аяқтадыңыз!</div>
+        <div class="cert-banner-sub">Барлық 3 модуль және 15 сабақты сәтті өттіңіз. Сертификатыңызды алыңыз!</div>
+        <button class="cert-download-btn" onclick="showCertificate()">🏆 Сертификатты алу</button>
+    </div>
+    <div class="modules-list" id="modules-list"></div>
+</main>
+
+<script>
+// ===== SUPABASE =====
+const SUPABASE_URL = 'https://hareclzhctspsqkkwkeb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhcmVjbHpoY3RzcHNxa2t3a2ViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3OTQ5MTYsImV4cCI6MjA5MzM3MDkxNn0.3mYaxfolWcrMpcAwKPqUA5fA8PBUvRbrToNE61XQ5_Q';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let currentUserFullName = '';
+let syncTimeout = null;
+// FIX: flag to prevent double loadProgressFromCloud
+let authInitialized = false;
+
+// ===== THEME =====
+function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+    localStorage.setItem('py_theme', isDark ? 'light' : 'dark');
+}
+(function() {
+    const saved = localStorage.getItem('py_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
+    });
+})();
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.innerHTML = (type === 'success' ? '☁️ ' : '⚠️ ') + msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+// ===== USER DROPDOWN =====
+function toggleUserDropdown() {
+    const dd = document.getElementById('user-dropdown');
+    dd.classList.toggle('open');
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('user-menu-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('user-dropdown')?.classList.remove('open');
+    }
+});
+
+// ===== AUTH UI =====
+function showRegister() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+    document.getElementById('auth-subtitle').textContent = 'Тегін тіркеліп, оқуды бастаңыз!';
+}
+function showLogin() {
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('auth-subtitle').textContent = 'Оқуды бастау үшін кіріңіз.\nПрогресіңіз бұлтта сақталады ☁️';
+}
+
+async function loginWithEmail() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-password').value;
+    const err = document.getElementById('login-error');
+    const btn = document.getElementById('login-btn');
+    err.style.display = 'none';
+    if (!email || !pass) { err.textContent = 'Email мен паролді толтырыңыз'; err.style.display = 'block'; return; }
+    btn.disabled = true; btn.textContent = 'Кіру...';
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    btn.disabled = false; btn.textContent = 'Кіру →';
+    if (error) {
+        err.textContent = 'Қате: ' + (error.message === 'Invalid login credentials' ? 'Email немесе пароль дұрыс емес' : error.message);
+        err.style.display = 'block';
+    }
+}
+
+async function registerWithEmail() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-password').value;
+    const err = document.getElementById('reg-error');
+    const suc = document.getElementById('reg-success');
+    const btn = document.getElementById('reg-btn');
+    err.style.display = 'none'; suc.style.display = 'none';
+    if (!name || !email || !pass) { err.textContent = 'Барлық өрістерді толтырыңыз'; err.style.display = 'block'; return; }
+    if (pass.length < 6) { err.textContent = 'Пароль кем дегенде 6 символ болуы керек'; err.style.display = 'block'; return; }
+    btn.disabled = true; btn.textContent = 'Тіркелу...';
+    const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { full_name: name } } });
+    btn.disabled = false; btn.textContent = 'Тіркелу →';
+    if (error) { err.textContent = 'Қате: ' + error.message; err.style.display = 'block'; }
+    else { suc.textContent = '✅ Тіркелу сәтті! Email-іңізге растау хаты жіберілді.'; suc.style.display = 'block'; }
+}
+
+async function loginWithGoogle() {
+    const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.href }
+    });
+    if (error) showToast('Google кіру қатесі: ' + error.message, 'error');
+}
+
+// FIX: proper sign out — clears state, hides dropdown, shows auth
+async function handleSignOut() {
+    document.getElementById('user-dropdown')?.classList.remove('open');
+    const { error } = await sb.auth.signOut();
+    if (error) { showToast('Шығу қатесі: ' + error.message, 'error'); return; }
+    // State reset
+    currentUser = null;
+    currentUserFullName = '';
+    authInitialized = false;
+    completedLessons = new Set();
+    answers = {};
+    submitted = {};
+    activeLesson = null;
+    openModules = new Set([0]);
+    // UI reset
+    document.getElementById('user-avatar').textContent = '?';
+    document.getElementById('user-name-short').textContent = '...';
+    document.getElementById('dropdown-name').textContent = '—';
+    document.getElementById('dropdown-email').textContent = '—';
+    setSyncStatus('offline');
+    document.getElementById('auth-overlay').style.display = 'flex';
+    buildModules();
+    updateProgress();
+}
+
+// ===== SYNC STATUS =====
+function setSyncStatus(status) {
+    const dot = document.getElementById('sync-dot');
+    if (!dot) return;
+    dot.className = 'sync-indicator' + (status === 'syncing' ? ' syncing' : status === 'offline' ? ' offline' : '');
+    dot.title = status === 'syncing' ? 'Сақталуда...' : status === 'offline' ? 'Желі жоқ' : 'Синхронизацияланды ✓';
+}
+
+// ===== LOAD PROGRESS =====
+async function loadProgressFromCloud() {
+    if (!currentUser) return;
+    setSyncStatus('syncing');
+    try {
+        const { data, error } = await sb
+            .from('progress')
+            .select('completed_lessons, test_answers, test_submitted')
+            .eq('user_id', currentUser.id)
+            .maybesingle();
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        if (data) {
+            completedLessons = new Set(data.completed_lessons || []);
+            answers = data.test_answers || {};
+            submitted = data.test_submitted || {};
+        } else {
+            completedLessons = new Set();
+            answers = {};
+            submitted = {};
+        }
+        setSyncStatus('synced');
+    } catch (e) {
+        console.error('Load error:', e);
+        setSyncStatus('offline');
+        showToast('Деректерді жүктеу қатесі', 'error');
+    }
+    buildModules();
+    updateProgress();
+}
+// 1. Пайдаланушының прогресін базадан жүктеу
+async function loadUserProgress() {
+    // 1. Алдымен сессияны күтеміз
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session || !session.user) {
+        console.log("Пайдаланушы жүйеге кірмеген");
+        return;
+    }
+
+    const user = session.user;
+
+    // 2. Базадан деректерді аламыз
+    const { data, error } = await supabase
+        .from('progress')
+        .select('completed_lessons')
+        .eq('user_id', user.id)
+        .maybeSingle();
+    if (error) {
+        console.error('Жүктеу қатесі:', error.message);
+        return;
+    }
+
+    if (data && data.completed_lessons) {
+        // 3. Локалды жадыны жаңартып, экранға шығарамыз
+        localStorage.setItem('completedLessons', JSON.stringify(data.completed_lessons));
+        renderProgress();
+    }
+}
+
+// 2. Прогресті базаға сақтау
+async function updateProgress(lessonId) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    let completed = JSON.parse(localStorage.getItem('completedLessons')) || [];
+    if (!completed.includes(lessonId)) {
+        completed.push(lessonId);
+    }
+
+    const { error } = await supabase
+        .from('progress')
+        .upsert({ 
+            user_id: user.id, 
+            completed_lessons: completed,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' }); // Егер Supabase-те қате берсе, осы жолды өшір
+
+    if (!error) {
+        localStorage.setItem('completedLessons', JSON.stringify(completed));
+        renderProgress();
+    }
+}
+
+// Бет ашылғанда автоматты түрде іске қосу
+document.addEventListener('DOMContentLoaded', () => {
+    loadUserProgress();
+});
+// ===== SAVE PROGRESS =====
+async function saveProgressToCloud() {
+    if (!currentUser) return;
+    setSyncStatus('syncing');
+    // localStorage backup
+    localStorage.setItem('py_completed', JSON.stringify([...completedLessons]));
+    localStorage.setItem('py_answers', JSON.stringify(answers));
+    localStorage.setItem('py_submitted', JSON.stringify(submitted));
+    try {
+        const { error } = await sb.from('progress').upsert({
+            user_id: currentUser.id,
+            completed_lessons: [...completedLessons],
+            test_answers: answers,
+            test_submitted: submitted,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+        if (error) throw error;
+        setSyncStatus('synced');
+        showToast('Прогрес сақталды ✓');
+    } catch (e) {
+        console.error('Save error:', e);
+        setSyncStatus('offline');
+        showToast('Интернет жоқ, жергілікті сақталды', 'error');
+    }
+}
+
+function debouncedSave() {
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(saveProgressToCloud, 1000);
+}
+
+// ===== AUTH STATE — FIX: single handler, no duplicate getSession call =====
+sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') {
+        // Already handled in handleSignOut, just ensure overlay is shown
+        document.getElementById('auth-overlay').style.display = 'flex';
+        return;
+    }
+
+    if (session && session.user) {
+        // FIX: skip if already initialized for this user
+        if (authInitialized && currentUser && currentUser.id === session.user.id) return;
+
+        currentUser = session.user;
+        authInitialized = true;
+
+        const meta = session.user.user_metadata || {};
+        const name = meta.full_name || meta.name || session.user.email.split('@')[0];
+        currentUserFullName = name;
+        const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+        document.getElementById('user-avatar').textContent = initials;
+        document.getElementById('user-name-short').textContent = name.split(' ')[0];
+        document.getElementById('dropdown-name').textContent = name;
+        document.getElementById('dropdown-email').textContent = session.user.email;
+        document.getElementById('auth-overlay').style.display = 'none';
+
+        await loadProgressFromCloud();
+    } else if (!session) {
+        document.getElementById('auth-overlay').style.display = 'flex';
+    }
+});
+
+// ===== CERTIFICATE =====
+function showCertificate() {
+    const now = new Date();
+    const months = ['қаңтар','ақпан','наурыз','сәуір','мамыр','маусым','шілде','тамыз','қыркүйек','қазан','қараша','желтоқсан'];
+    const dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear() + ' ж.';
+    document.getElementById('cert-name').textContent = currentUserFullName || currentUser?.email?.split('@')[0] || 'Оқушы';
+    document.getElementById('cert-date').textContent = dateStr;
+    const modal = document.getElementById('cert-modal');
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+function closeCertModal() {
+    const modal = document.getElementById('cert-modal');
+    modal.classList.remove('show');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+function printCertificate() {
+    const content = document.getElementById('certificate-content').innerHTML;
+    const win = window.open('', '_blank', 'width=820,height=640');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PythonКурсы — Сертификат</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Outfit',sans-serif;background:#fff;}#certificate-content{padding:48px 52px;background:#fff;position:relative;overflow:hidden;font-family:'Outfit',sans-serif;}.cert-border-outer{position:absolute;inset:12px;border:2px solid #2563eb;border-radius:12px;opacity:0.15;pointer-events:none;}.cert-border-inner{position:absolute;inset:18px;border:1px solid #06b6d4;border-radius:8px;opacity:0.1;pointer-events:none;}.cert-corner{position:absolute;width:32px;height:32px;border-color:#2563eb;border-style:solid;opacity:0.4;}.cert-corner.tl{top:20px;left:20px;border-width:2px 0 0 2px;border-radius:4px 0 0 0;}.cert-corner.tr{top:20px;right:20px;border-width:2px 2px 0 0;border-radius:0 4px 0 0;}.cert-corner.bl{bottom:20px;left:20px;border-width:0 0 2px 2px;border-radius:0 0 0 4px;}.cert-corner.br{bottom:20px;right:20px;border-width:0 2px 2px 0;border-radius:0 0 4px 0;}.cert-bg-deco{position:absolute;right:-20px;bottom:-20px;font-size:160px;opacity:0.04;user-select:none;pointer-events:none;}.cert-header{text-align:center;margin-bottom:24px;}.cert-logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}.cert-logo-box{width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#06b6d4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}.cert-site-name{font-size:22px;font-weight:800;color:#0f172a;}.cert-site-name span{color:#06b6d4;}.cert-divider-line{width:60px;height:3px;margin:10px auto;background:linear-gradient(90deg,#2563eb,#06b6d4);border-radius:99px;}.cert-of-completion{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#64748b;margin-bottom:4px;}.cert-main-title{font-size:30px;font-weight:900;color:#0f172a;letter-spacing:-0.5px;}.cert-presents{font-size:13px;color:#64748b;margin:18px 0 6px;text-align:center;}.cert-student-name{font-size:34px;font-weight:800;color:#2563eb;margin:4px 0 16px;font-style:italic;letter-spacing:-0.5px;text-align:center;}.cert-body-text{font-size:13px;color:#475569;line-height:1.7;max-width:480px;margin:0 auto 16px;text-align:center;}.cert-course-name{font-size:16px;font-weight:700;color:#0f172a;margin:4px 0;text-align:center;}.cert-stats-row{display:flex;justify-content:center;gap:24px;margin:20px 0;}.cert-stat{text-align:center;}.cert-stat-num{font-size:24px;font-weight:800;color:#2563eb;}.cert-stat-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;margin-top:2px;}.cert-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e2e8f0;}.cert-sign-block{text-align:center;}.cert-sign-line{width:120px;height:1px;background:#94a3b8;margin:0 auto 6px;}.cert-sign-name{font-size:11px;font-weight:600;color:#475569;}.cert-sign-title{font-size:10px;color:#94a3b8;}.cert-seal{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#06b6d4);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;}.cert-seal-icon{font-size:22px;}.cert-seal-text{font-size:8px;font-weight:700;letter-spacing:0.5px;margin-top:1px;}.cert-date-block{text-align:right;}.cert-date-label{font-size:10px;color:#94a3b8;margin-bottom:2px;}.cert-date-val{font-size:12px;font-weight:600;color:#475569;}@media print{body{margin:0;}#certificate-content{padding:32px;}}</style></head><body><div id="certificate-content">${content}</div><script>window.onload=function(){window.print();}<\/script></body></html>`);
+    win.document.close();
+}
+
+// ===== COURSE DATA =====
+const MODULES = [
+    {
+        id:0, num:'01', numClass:'m1', title:'Python бағдарламалау негіздері', subtitle:'Кіріспе модуль — Python-ға танысу',
+        lessons:[
+            {
+                id:'1-1', title:'Python бағдарламалау тілі дегеніміз не', videoId:'1g48cXrX4gB4f4G0wxx5L1YnqQO2Df_Ef',
+                notes:`<h3>🐍 Python тіліне кіріспе</h3><p>Бағдарламалау әлеміне қадам басқан кез келген адам ең алдымен "Қай тілден бастаған дұрыс?" деген сұраққа тап болады. Қазіргі таңда бұл сұрақтың ең танымал жауабы — Python. Python — бұл жоғары деңгейлі, интерпретацияланатын, жалпы мақсаттағы бағдарламалау тілі.</p><div class="note-highlight"><span>💡</span><span>Python-ның ең басты ерекшелігі — оның синтаксисі табиғи ағылшын тіліне өте жақын.</span></div><h3>📚 Негізгі анықтамалар</h3><p><b>Интерпретациялау:</b> Кодты машиналық тілге алдын ала компиляция жасамай-ақ, жолма-жол орындау процесі.</p><div class="code-block"># Қарапайым "Сәлем әлем" бағдарламасы\nprint("Сәлем, Python!")</div><h3>🔍 Қолдану салалары</h3><div class="tip-grid"><div class="tip-card"><div class="tc-title">Веб-әзірлеу</div><div class="tc-desc">Django және Flask фреймворктармен күрделі сайттар жасау.</div></div><div class="tip-card"><div class="tc-title">Жасанды интеллект</div><div class="tc-desc">Machine Learning және Data Science саласындағы негізгі құрал.</div></div></div>`,
+                tests:[{q:'Python қандай тіл түріне жатады?',opts:['Төмен деңгейлі','Жоғары деңгейлі','Машиналық код','Ассемблер'],ans:1},{q:'Python-ды кім жасады?',opts:['Билл Гейтс','Гвидо ван Россум','Джеймс Гослинг','Линус Торвальдс'],ans:1},{q:'Кодты жолма-жол орындау қалай аталады?',opts:['Компиляция','Интерпретация','Дебаггинг','Трансляция'],ans:1},{q:'Python-да мәлімет шығару функциясы?',opts:['input()','print()','out()','write()'],ans:1},{q:'Код блогын бөлу үшін не қолданылады?',opts:['{} жақша','() жақша','Шегіністер (indentation)','; белгісі'],ans:2},{q:'Python алғаш рет қай жылы шықты?',opts:['1991','1985','2000','1995'],ans:0},{q:'Python-да комментарий қай белгімен басталады?',opts:['//','/*','#','--'],ans:2},{q:'Төмендегілердің қайсысы Python фреймворкі?',opts:['React','Django','Laravel','Angular'],ans:1},{q:'Python файлының кеңейтілімі?',opts:['.pt','.py','.js','.exe'],ans:1},{q:'Python қайда қолданылмайды?',opts:['AI','Web','Data Science','Драйвер жазу (негізінен)'],ans:3}],
+                tips:{1:'Python жоғары деңгейлі тіл.',2:'Гвидо ван Россум жасады.',3:'Интерпретация — жолма-жол орындау.',4:'print() экранға шығарады.',5:'Шегіністер (4 бос орын) қолданылады.',6:'1991 жылы шықты.',7:'# белгісі комментарий.',8:'Django — Python фреймворкі.',9:'.py кеңейтімі.',10:'Драйверлер C/C++ тілінде жазылады.'}
+            },
+            {id:'1-2',title:'Python тілінің архитектурасы (тереңдетілген)',videoId:'1g48cXrX4gB4f4G0wxx5L1YnqQO2Df_Ef',notes:`<h3>🐍 Python архитектурасы</h3><p>Python — интерпретацияланатын тіл. Кодты компьютер тікелей орындамайды. Алдымен Python интерпретаторы кодты <b>Bytecode</b> форматқа түрлендіреді, содан кейін PVM (Python Virtual Machine) орындайды.</p><div class="note-highlight"><span>💡</span><span>Python — көппарадигмалы тіл: OOP, функционалды және процедуралық стильді қолдайды.</span></div><div class="code-block">x = 10       # int\nx = "Сәлем"  # енді str — динамикалық типтеу\nprint(x)</div><h3>📚 Zen of Python</h3><ul><li><b>Beautiful is better than ugly</b></li><li><b>Simple is better than complex</b></li><li><b>Readability counts</b></li></ul>`,tests:[{q:'Python-ның негізгі ерекшелігі?',opts:['Күрделі синтаксис','Шегіністер арқылы блок бөлу','Тек Windows','Компиляция'],ans:1},{q:'Python кодты алдымен қандай форматқа айналдырады?',opts:['Машиналық код','Екілік','Bytecode','Ассемблер'],ans:2},{q:'Гвидо ван Россум қай елден?',opts:['Нидерланды','АҚШ','Ұлыбритания','Германия'],ans:0},{q:'Жадты автоматты тазалау механизмі?',opts:['Memory Clear','Garbage Collector','Auto Delete','PVM'],ans:1},{q:'Zen of Python қалай көріледі?',opts:['import math','import zen','import this','print(zen)'],ans:2},{q:'Python философиясына жататын қағида?',opts:['Complex is better','Readability counts','Explicit is better','B және C дұрыс'],ans:3},{q:'Айнымалы типін алдын ала жазбау?',opts:['Статикалық','Динамикалық','Типсіз','Авто'],ans:1},{q:'Python виртуалды машинасы?',opts:['PVM','JVM','CVM','BVM'],ans:0},{q:'Ресми пакеттер қоймасы?',opts:['GitHub','PyPI','StackOverflow','PythonStore'],ans:1},{q:'Шегіністер қатесі?',opts:['LogicError','SyntaxError','IndentationError','ValueError'],ans:2}],tips:{1:'Шегіністер — код блоктарын бөледі.',2:'Bytecode → PVM орындайды.',3:'Нидерланды, CWI орталығы.',4:'Garbage Collector — жадты автоматты тазалайды.',5:'"import this" — Zen of Python.',6:'Екеуі де Python философиясы.',7:'Динамикалық типтеу — типті өзі анықтайды.',8:'PVM — Python Virtual Machine.',9:'PyPI — pip арқылы орнатылады.',10:'IndentationError — шегініс қатесі.'}},
+            {id:'1-3',title:'Python тілінің артықшылықтары',videoId:'1FXrbh8wqMdLCzw6-RlCLqKVLbS0g3rZZ',notes:`<h3>✅ Python артықшылықтары</h3><p>Python феноменальды табысы кездейсоқ емес — техникалық қуаттылық пен қарапайымдылықтың тепе-теңдігін тапты.</p><div class="note-highlight"><span>✔️</span><span>Бірдей тапсырма үшін Python коды Java-дан 3 есе, C++ тілінен 5-10 есе қысқа болуы мүмкін.</span></div><div class="tip-grid"><div class="tip-card"><div class="tc-title">Ашық бастапқы код</div><div class="tc-desc">Толықтай тегін, кез келген адам өзгерте алады.</div></div><div class="tip-card"><div class="tc-title">Үлкен қауымдастық</div><div class="tc-desc">Миллиондаған девелоперлер көмектесуге дайын.</div></div></div><div class="code-block">sanndar = [5, 2, 9, 1]\nsanndar.sort()\nprint(sanndar)  # [1, 2, 5, 9]</div>`,tests:[{q:'"Batteries Included" философиясы?',opts:['Батареямен жұмыс','Стандартты кітапханада дайын','Ақы төлеу керек','Физикалық'],ans:1},{q:'Python коды неге қысқа?',opts:['Функциясы аз','Синтаксис қарапайым','Кіші есептер','Машиналық код жоқ'],ans:1},{q:'Кроссплатформалылық деген не?',opts:['Тек Windows','Әртүрлі ОЖ-де жұмыс','Кодты жасыру','Ақылы нұсқа'],ans:1},{q:'"Желім тіл" неге?',opts:['Өшіру қиын','Басқа тілдерді біріктіреді','Тек веб','Автор атады'],ans:1},{q:'Python артықшылығы емес?',opts:['Үлкен қауымдастық','Тегін','Аппараттық басқару','Оқудың жеңілдігі'],ans:2},{q:'Динамикалық типтеудің пайдасы?',opts:['Жылдам орындалу','Икемділік береді','Қателерді жояды','Компьютерді салқындатады'],ans:1},{q:'Веб үшін ең танымал фреймворк?',opts:['React','Django','Laravel','Angular'],ans:1},{q:'Data Science-та Python рөлі?',opts:['Қолданылмайды','Негізгі тіл','Қосымша құрал','Дизайнерлер'],ans:1},{q:'Python Software Foundation мақсаты?',opts:['Сату','Дамытуды қолдау','Жасыру','Ойын жасау'],ans:1},{q:'Open Source нені білдіреді?',opts:['Google ғана','Кез келген адам қолдана алады','Браузерде ашылады','Автор ғана'],ans:1}],tips:{1:'"Batteries Included": стандартты кітапхана бай.',2:'Жоғары деңгейлі синтаксис қысқарады.',3:'Кроссплатформа: Windows, macOS, Linux.',4:'"Желім тіл" — C, C++, Java-мен жұмыс.',5:'Аппараттық драйверлер C/C++ тиімдірек.',6:'Динамикалық типтеу — жылдам прототиптеу.',7:'Django — Instagram, Pinterest.',8:'Data Science 90%+ Python.',9:'PSF тілдің дамуын бақылайды.',10:'Open Source: GitHub-та.'}},
+            {id:'1-4',title:'Python-ды орнату жолдары',videoId:'1S03EFqtmwAN_kWAvqJFuByNwosfQEv8L',notes:`<h3>📥 Python орнату нұсқаулығы</h3><p>Python-ның ресми сайты — <b>python.org</b>. Осы жерден ғана жүктеңіз!</p><div class="note-highlight"><span>⚠️</span><span>ЕҢ МАҢЫЗДЫ: Орнату кезінде "Add Python to PATH" құсбелгісін міндетті түрде қою керек!</span></div><div class="tip-grid"><div class="tip-card"><div class="tc-title">PIP менеджері</div><div class="tc-desc">Кітапханаларды бір командамен орнатады.</div></div><div class="tip-card"><div class="tc-title">PATH деген не?</div><div class="tc-desc">Жүйелік айнымалы, онсыз "python" командасы істемейді.</div></div></div><div class="code-block">python --version\n# Нәтиже: Python 3.12.1</div>`,tests:[{q:'Python ресми сайты?',opts:['python.com','python.org','python.kz','py.dev'],ans:1},{q:'"Add Python to PATH" қызметі?',opts:['Қазақшалау','Терминалда "python" қолжетімді ету','Кодты өшіру','Вирустан қорғау'],ans:1},{q:'Кітапханаларды орнататын құрал?',opts:['ZIP','PIP','APP','EXE'],ans:1},{q:'Нұсқаны тексеру командасы?',opts:['python -v','python --version','py -check','version()'],ans:1},{q:'macOS-та орнату тәсілі?',opts:['Мүмкін емес','Ресми сайт немесе Homebrew','Тек AppStore','Тек флешка'],ans:1},{q:'IDLE дегеніміз?',opts:['Пакет менеджері','Стандартты редактор','Амалдық жүйе','Ойын'],ans:1},{q:'"Customize installation" не үшін?',opts:['Түс өзгерту','Компоненттерді таңдау','Жою','Ақы төлеу'],ans:1},{q:'Windows командалық жолды қалай ашады?',opts:['Пуск→CMD','Пуск→Word','Пуск→Paint','Браузер'],ans:0},{q:'pip арқылы орнату мысалы?',opts:['get pandas','pip install pandas','install -p pandas','pandas.add()'],ans:1},{q:'Қай нұсқаны орнату керек?',opts:['Ең ескі','Соңғы тұрақты 3.x','Бета','Альфа'],ans:1}],tips:{1:'python.org — тек ресми сайт.',2:'"Add to PATH" — міндетті!',3:'PIP — pip install numpy.',4:'"python --version" — нұсқаны шығарады.',5:'macOS Homebrew: brew install python3.',6:'IDLE — стандартты редактор.',7:'"Customize" — PIP, IDLE таңдау.',8:'Win+R → cmd.',9:'pip install pandas — pandas орнатады.',10:'Соңғы тұрақты: python.org тексеріңіз.'}},
+            {id:'1-5',title:'IDE және программалау ортасы',videoId:'1V1_m_Hl7K4jTUNAlxpZ-rCT1iowhgGQN',notes:`<h3>💻 IDE — Бағдарламашының негізгі құралы</h3><p>IDE (Integrated Development Environment) — код жазу, тексеру және іске қосуға арналған кешенді бағдарлама.</p><div class="note-highlight"><span>🛠️</span><span>Кәсіби мамандардың 70%+ Python үшін PyCharm немесе VS Code таңдайды.</span></div><div class="tip-grid"><div class="tip-card"><div class="tc-title">PyCharm</div><div class="tc-desc">JetBrains — тек Python-ға арналған ең қуатты IDE.</div></div><div class="tip-card"><div class="tc-title">VS Code</div><div class="tc-desc">Microsoft — жеңіл, мыңдаған плагин, тегін.</div></div></div><div class="code-block">import math\nprint(math.sq...)  # IDE өзі толтырады: sqrt</div>`,tests:[{q:'IDE толық мағынасы?',opts:['Internal Data Entry','Integrated Development Environment','Interactive Design Editor','Input Digital Engine'],ans:1},{q:'Тек Python-ға арналған IDE?',opts:['Sublime','PyCharm','Notepad++','Atom'],ans:1},{q:'VS Code артықшылығы?',opts:['Тек ақылы','Жеңілдігі мен плагиндері','Код жазу мүмкін емес','Тек Win95'],ans:1},{q:'Кодтағы қателерді іздеу?',opts:['Coding','Debugging','Scanning','Deleting'],ans:1},{q:'Data Science үшін блоктармен код?',opts:['Jupyter Notebook','Word','Calculator','Paint'],ans:0},{q:'"Syntax Highlighting" не?',opts:['Кодты өшіру','Түрлі түске бояу','Жылдамдату','Дыбыс'],ans:1},{q:'Linting деген не?',opts:['PEP 8 сәйкестігін тексеру','Интернетке қосылу','Кодты жасыру','Музыка'],ans:0},{q:'VS Code кім жасады?',opts:['Google','Apple','Microsoft','Facebook'],ans:2},{q:'IDE ішіндегі Terminal не үшін?',opts:['Кино','Командаларды орындау','Сурет','Ойын'],ans:1},{q:'PyCharm тегін нұсқасы?',opts:['Professional','Community','Standard','Educational'],ans:1}],tips:{1:'IDE = Integrated Development Environment.',2:'PyCharm — JetBrains, Python-ға арналған.',3:'VS Code — тегін, жеңіл, extensionдар.',4:'Debugging — breakpoint қоясыз.',5:'Jupyter Notebook — cells арқылы.',6:'Syntax Highlighting — кілт сөздерді бөледі.',7:'Linting — PEP 8 стандарты.',8:'VS Code — Microsoft, Open Source.',9:'Terminal — pip install, python commands.',10:'PyCharm Community — тегін.'}}
+        ]
+    },
+    {
+        id:1, num:'02', numClass:'m2', title:'Негізгі программалау құрылымдары', subtitle:'Айнымалылар, типтер, шарттар',
+        lessons:[
+            {id:'2-1',title:'Айнымалы ұғымы',videoId:'18LnnSBrLz7ArTDEcldhs2f5765JJw6tV',notes:`<h3>📦 Айнымалылар (Variables)</h3><p>Айнымалы — мәліметтерді сақтауға арналған жадтағы аталған орын. Python-да айнымалыны жариялау үшін арнайы кілт сөз қажет емес.</p><div class="note-highlight"><span>💡</span><span>Python-да айнымалы жариялау динамикалық: типті алдын ала жазудың қажеті жоқ.</span></div><div class="code-block">x = 5\nname = "Алибек"\na, b, c = 1, 2, 3\nprint(a, b, c)  # 1 2 3</div><div class="tip-grid"><div class="tip-card"><div class="tc-title">snake_case стилі</div><div class="tc-desc">Python-да: student_name, total_price.</div></div><div class="tip-card"><div class="tc-title">type() функциясы</div><div class="tc-desc">type(5) → int, type("hi") → str.</div></div></div>`,tests:[{q:'Айнымалы жариялау кілт сөзі?',opts:['var','let','int','Кілт сөз жоқ'],ans:3},{q:'x = 5 нені жасайды?',opts:['Салыстыру','x-ке 5 беру','x өшіру','5 шығару'],ans:1},{q:'Айнымалы атауы не бастала АЛМАЙДЫ?',opts:['Әріп','_','Сан','Бас әріп'],ans:2},{q:'"name" мен "Name"?',opts:['Бірдей','Екі бөлек','Қате','Бір name'],ans:1},{q:'a,b,c=1,2,3 нәтижесі?',opts:['Тек a=1','a=1,b=2,c=3','Қате','Бәрі 3'],ans:1},{q:'type(x) не қайтарады?',opts:['Мәнін','Атауын','Типін','Өлшемін'],ans:2},{q:'Python атау стилі?',opts:['studentName','student name','student_name','StudentName'],ans:2},{q:'Мәнді кейін өзгертуге бола ма?',opts:['Жоқ','Иә','Тек бір рет','Тек сан'],ans:1},{q:'"for" айнымалы бола ма?',opts:['Иә','Жоқ, кілт сөз','Кіші болса','_ қойса'],ans:1},{q:'x="Сәлем" → x=10 болса?',opts:['Қате','x=10 болады','Жойылады','Екеуі сақталады'],ans:1}],tips:{1:'x=5 — кілт сөзсіз.',2:'= мән беру операторы.',3:'2name қате, name2 дұрыс.',4:'name≠Name — регистрге сезімтал.',5:'a,b,c=1,2,3 — бір жолда.',6:'type() → <class "int">.',7:'snake_case — PEP 8.',8:'Динамикалық — x=5 кейін x="Сәлем".',9:'"for","if","while" — кілт сөз.',10:'Жаңа мән ескіні алмастырады.'}},
+            {id:'2-2',title:'Мәліметтер типтері (int, float, str, bool)',videoId:'1wR4i1g8joBc0yjL4jUhz9d3zYy2KOMmV',notes:`<h3>🗂️ Мәлімет типтері</h3><div class="code-block">x = 10       # int\ny = 3.14     # float\nz = "Сәлем"  # str\nb = True     # bool</div><h3>Операторлар</h3><div class="code-block">7 // 2  # 3   — бүтін бөлу\n7 % 2   # 1   — қалдық\n2 ** 3  # 8   — дәреже\nf"Жасым: {jas}"  # f-string</div>`,tests:[{q:'x=10 типі?',opts:['float','int','str','bool'],ans:1},{q:'y=3.14 типі?',opts:['int','double','float','str'],ans:2},{q:'z="Сәлем" типі?',opts:['char','text','str','word'],ans:2},{q:'b=True типі?',opts:['int','str','flag','bool'],ans:3},{q:'7//2?',opts:['3.5','3','4','2'],ans:1},{q:'7%2?',opts:['3','0','1','3.5'],ans:2},{q:'2**3?',opts:['6','5','9','8'],ans:3},{q:'int("25")?',opts:['"25"','25.0','25','Қате'],ans:2},{q:'str(100)?',opts:['100','"100"','100.0','Қате'],ans:1},{q:'"Сәлем"+" "+"Әлем"?',opts:['Қате','"СәлемӘлем"','"Сәлем Әлем"','0'],ans:2}],tips:{1:'10 — int, бөлшек нүктесі жоқ.',2:'3.14 — float, нүкте бар.',3:'Тырнақшадағы — str.',4:'bool — True/False, бас әріп.',5:'// бүтін бөлу: 7//2=3.',6:'% қалдық: 7%2=1.',7:'** дәреже: 2**3=8.',8:'int("25")=25.',9:'str(100)="100".',10:'+ — мәтін біріктіру.'}},
+            {id:'2-3',title:'Пернетақтадан мәлімет енгізу (input())',videoId:'1To2trM-ELodXO5VgLvdgp8M7ysKLKtya',notes:`<h3>⌨️ input() функциясы</h3><div class="note-highlight"><span>⚠️</span><span>input() ӘРҚАШАН str қайтарады! Санмен амал жасамас бұрын int() немесе float() арқылы түрлендіру міндетті!</span></div><div class="code-block">at = input("Атыңыз: ")\njas = int(input("Жасыңыз: "))\nprint(f"5 жылдан кейін: {jas + 5}")</div>`,tests:[{q:'input() қандай тип қайтарады?',opts:['int','float','str','bool'],ans:2},{q:'Бүтін сан алу үшін?',opts:['x=input()','x=int(input())','x=str(input())','x=number(input())'],ans:1},{q:'input("Атыңыз:") не жасайды?',opts:['Экранға шығарып str қайтарады','Ат жазады','Қате','Ештеңе'],ans:0},{q:'Бөлшек сан алу?',opts:['int(input())','double(input())','float(input())','decimal(input())'],ans:2},{q:'"25"+"30"?',opts:['55','TypeError','"2530"','Автоматты'],ans:2},{q:'f"{name}" не шығарады?',opts:['"{name}"','name мәні','Қате','Бос'],ans:1},{q:'a=input() не жасайды?',opts:['Қате','Күтеді','Бос мән','Аяқталады'],ans:1},{q:'int(input()) — "abc" жазса?',opts:['abc','ValueError','0','Ештеңе'],ans:1},{q:'print("Нәтиже:",5+3)?',opts:['Нәтиже:53','Нәтиже: 8','"Нәтиже: 5+3"','Қате'],ans:1},{q:'Екі санды қосу үшін дұрыс амал?',opts:['a=input();b=input();print(a+b)','a=int(input());b=int(input());print(a+b)','a,b=input()','print(input()+input())'],ans:1}],tips:{1:'input() → str.',2:'int(input()) — str→int.',3:'Жақша мәтін prompt деп аталады.',4:'float(input()) — бөлшек.',5:'"25"+"30"="2530" мәтін.',6:'f"{name}" — {} іші алмастырылады.',7:'input() Enter баспайынша күтеді.',8:'ValueError: int("abc") мүмкін емес.',9:'print("Нәтиже:",8) → бос орын қойылады.',10:'int() арқылы түрлендіру керек.'}},
+            {id:'2-4',title:'if / if-else / if-elif-else операторлары',videoId:'1RZ3pEXa4Ag4gQmBBEuwobk3snZHLbSOs',notes:`<h3>🔀 Шартты операторлар</h3><div class="note-highlight"><span>💡</span><span>Python-да шегіністер өте маңызды! Блоктар міндетті түрде шегіністі болуы керек.</span></div><div class="code-block">jas = 18\nif jas >= 18:\n    print("Кәмелет")\nelif jas >= 14:\n    print("Жасөспірім")\nelse:\n    print("Бала")</div>`,tests:[{q:'Шартты оператор кілт сөзі?',opts:['when','if','check','case'],ans:1},{q:'Шарт орындалмаса?',opts:['elif','else','end','default'],ans:1},{q:'Бірнеше шарт тексеру?',opts:['else if','elseif','elif','orif'],ans:2},{q:'if соңына не?',opts:[';','.',':', '{'],ans:2},{q:'jas=17, if jas>=18 болса?',opts:['if орындалады','else орындалады','Қате','Екеуі'],ans:1},{q:'Блок қалай белгіленеді?',opts:['{}','Шегіністер','begin..end','Нүкте'],ans:1},{q:'elif саны?',opts:['Тек 1','Тек 2','Макс 5','Шектелмеген'],ans:3},{q:'if 5>3: print("Иә") дұрыс па?',opts:['Иә','Жоқ, {}','Жоқ, шегініс','Жоқ, 5>3 жалған'],ans:0},{q:'else неше рет?',opts:['Шектелмеген','2','1','Мүлдем'],ans:2},{q:'baga=72, if>=90:A elif>=75:B elif>=60:C else:F',opts:['A','B','C','F'],ans:2}],tips:{1:'"if" кілт сөзі.',2:'False → else.',3:'elif = "else if".',4:'if x>0: — қос нүкте міндетті.',5:'17>=18 → False → else.',6:'4 бос орын — шегініс.',7:'elif саны шектелмеген.',8:'Бір жолда да дұрыс.',9:'else — бір рет, соңында.',10:'72>=60 → C.'}},
+            {id:'2-5',title:'Салыстыру және логикалық операторлар',videoId:'13tZJIbV00PMxLi7Y_qxuW78KMKC83Y5Z',notes:`<h3>⚖️ Салыстыру операторлары</h3><div class="code-block">x, y = 10, 5\nprint(x == y)   # False\nprint(x != y)   # True\nprint(x > y)    # True\nprint(x >= 10)  # True</div><h3>Логикалық: and, or, not</h3><div class="code-block">if jas >= 18 and tabys >= 100000:\n    print("Несие алуға болады")\nif not (jas < 18):\n    print("Ересек")</div>`,tests:[{q:'Теңдікті тексеру?',opts:['=','===','==',':='],ans:2},{q:'Тең емес?',opts:['<>','!','!=','not='],ans:2},{q:'10>5?',opts:['10','5','True','False'],ans:2},{q:'3==3.0?',opts:['False','True','Қате','0'],ans:1},{q:'and қашан True?',opts:['Бірі True','Екеуі True','Екеуі False','Бірінші True'],ans:1},{q:'or қашан True?',opts:['Екеуі True','Бірі True','Екеуі False','Бірінші False'],ans:1},{q:'not True?',opts:['True','False','0','Қате'],ans:1},{q:'True and False?',opts:['True','False','1','0'],ans:1},{q:'False or True?',opts:['False','True','0','Қате'],ans:1},{q:'5>=5?',opts:['False','True','5','Қате'],ans:1}],tips:{1:'== тексереді, = береді.',2:'!= тең емес.',3:'10>5→True.',4:'3==3.0→True (мән тең).',5:'and: екеуі де True.',6:'or: бірі True жеткілікті.',7:'not True→False.',8:'True and False→False.',9:'False or True→True.',10:'5>=5→True.'}}
+        ]
+    },
+    {
+        id:2, num:'03', numClass:'m3', title:'Циклдер, функциялар және тізімдер', subtitle:'for, while, def, List',
+        lessons:[
+            {id:'3-1',title:'for циклі',videoId:'1F-dlJFdyMjBbcgSAbj7vNLjLen1OhkMX',notes:`<h3>🔄 for циклі</h3><div class="note-highlight"><span>💡</span><span>"Осы тізімдегі ӘР БІР элемент үшін мынаны жаса" деп оқуға болады.</span></div><div class="code-block">for i in range(5):\n    print(i)  # 0,1,2,3,4\n\nzhemister = ["алма", "банан", "жүзім"]\nfor zh in zhemister:\n    print(zh)</div>`,tests:[{q:'for не үшін?',opts:['Шарт тексеру','Қайталау','Айнымалы','Функция'],ans:1},{q:'range(5)?',opts:['1,2,3,4,5','0,1,2,3,4','0..5','1..4'],ans:1},{q:'range(2,6)?',opts:['2,3,4,5,6','2,3,4,5','1..6','2,4,6'],ans:1},{q:'range(0,10,2)?',opts:['0..10','0,2,4,6,8','2,4,6,8,10','0,2,4,6,8,10'],ans:1},{q:'for x in [1,2,3] неше рет?',opts:['1','2','3','0'],ans:2},{q:'for a in "Hi" нәтиже?',opts:['Hi','H\\ni','H I','Қате'],ans:1},{q:'enumerate() не береді?',opts:['Тек индекс','Тек мән','Индекс+мән','Санын'],ans:2},{q:'for i in range(3) неше рет?',opts:['2','3','4','1'],ans:1},{q:'Тізімді аралау синтаксисі?',opts:['for t:','for x in t:','foreach x t:','loop x in t:'],ans:1},{q:'range(5,1,-1)?',opts:['5,4,3,2,1','5,4,3,2','1..5','5,3,1'],ans:1}],tips:{1:'for — белгілі рет немесе тізім бойынша.',2:'range(5)→0,1,2,3,4.',3:'range(2,6)→2,3,4,5.',4:'range(0,10,2)→0,2,4,6,8.',5:'[1,2,3] — 3 элемент.',6:'"Hi"→H,i.',7:'enumerate(): индекс+мән.',8:'range(3)→0,1,2.',9:'for x in tizim:',10:'range(5,1,-1)→5,4,3,2.'}},
+            {id:'3-2',title:'while циклі және range() функциясы',videoId:'1PtbBtn8rxM2-Za5QdmUcRZ0KAVYevTz3',notes:`<h3>🔁 while циклі</h3><div class="note-highlight"><span>⚠️</span><span>Шарттың бір кезде False болатынына көз жеткізіңіз. Болмаса шексіз цикл!</span></div><div class="code-block">i = 0\nwhile i < 5:\n    print(i)\n    i += 1  # міндетті!</div>`,tests:[{q:'while қашан орындалады?',opts:['Белгілі рет','True болып тұрғанша','Бір рет','Ешқашан'],ans:1},{q:'i=0;while i<3:print(i);i+=1 неше рет?',opts:['2','3','4','0'],ans:1},{q:'Шексіз цикл себебі?',opts:['range() қате','Шарт ешқашан False','break','i+=1'],ans:1},{q:'while True тоқтату?',opts:['stop','break','end','exit()'],ans:1},{q:'for vs while?',opts:['for жылдам','for белгілі, while шарт','while тек сан','Айырмашылық жоқ'],ans:1},{q:'i=5;while i>0:i-=1 неше рет?',opts:['4','5','6','0'],ans:1},{q:'range(1,7,2)?',opts:['1..6','1,3,5','1,3,5,7','2,4,6'],ans:1},{q:'range() жадты сақтай ма?',opts:['Иә, бәрін','Жоқ, lazy','Тек 1000','Тізім ретінде'],ans:1},{q:'while x!="stop":x=input() не?',opts:['"stop" дейін сұрайды','Бір рет','Қате','x жояды'],ans:0},{q:'list(range(3,9,2))?',opts:['[3..8]','[3,5,7]','[3,5,7,9]','[2,4,6,8]'],ans:1}],tips:{1:'while шарт True болып тұрғанша.',2:'0<3→1<3→2<3→3<3 False → 3 рет.',3:'i+=1 болмаса шексіз.',4:'break — while-дан шығады.',5:'for — белгілі, while — шарт.',6:'5→4→3→2→1→0 — 5 рет.',7:'range(1,7,2)→1,3,5.',8:'range() — lazy evaluation.',9:'"stop" жазылғанша қайталайды.',10:'list(range(3,9,2))→[3,5,7].'}},
+            {id:'3-3',title:'break және continue операторлары',videoId:'13MpYucnqt8JS5KXSVKqK6mHTM_j0KrB4',notes:`<h3>⏹️ Цикл басқару</h3><div class="code-block">for i in range(10):\n    if i == 5:\n        break       # 0,1,2,3,4\n    print(i)\n\nfor i in range(10):\n    if i % 2 == 0:\n        continue    # 1,3,5,7,9\n    print(i)</div>`,tests:[{q:'break не жасайды?',opts:['Итерация өткізу','Циклді тоқтату','Бағдарламаны жабу','Шарт'],ans:1},{q:'continue не жасайды?',opts:['Циклді тоқтату','Қайта іске қосу','Ағымдағы өткізу','Функция'],ans:2},{q:'for i in range(10):if i==5:break — соңғы сан?',opts:['5','4','6','10'],ans:1},{q:'for i in range(5):if i==2:continue;print(i)?',opts:['0,1,2,3,4','0,1,3,4','2','0,1'],ans:1},{q:'break қай жерде?',opts:['Тек for','Тек while','for және while','Тек функция'],ans:2},{q:'while True:x=input();if x=="stop":break?',opts:['"stop" дейін сұрайды','Бір рет','Қате','"True"'],ans:0},{q:'continue кейін цикл?',opts:['Шығады','Келесі итерацияға','Функцияға','Соңына'],ans:1},{q:'break орнына pass?',opts:['Тоқтайды','Жалғасады','Қате','continue'],ans:1},{q:'if i%2!=0:continue — нәтиже?',opts:['1,3,5','2,4','1..5','Қате'],ans:1},{q:'Іздеуде break неге пайдалы?',opts:['Бәрін тексеру','Тиімді тоқтау','Сұрыптау','Шығару'],ans:1}],tips:{1:'break — циклді толықтай аяқтайды.',2:'continue — тек ағымдағы өткізеді.',3:'i=4 шығарылады, break i==5-те.',4:'i==2 өткізіледі → 0,1,3,4.',5:'break және continue — for та, while та.',6:'"stop" дейін қайталайды.',7:'continue → келесі итерация басы.',8:'pass — ештеңе жасамайды.',9:'Тақтар өткізіледі → 2,4.',10:'Элемент табылса бүкілді тексермейді.'}},
+            {id:'3-4',title:'Функция: def және return',videoId:'1wDxG7ly5OxSbD2--f_GpN387SswE0XoI',notes:`<h3>🧩 Функциялар</h3><div class="note-highlight"><span>💡</span><span>"DRY" — Don't Repeat Yourself. Қайталанатын кодты функцияға айналдыр!</span></div><div class="code-block">def qosu(a, b):\n    return a + b\n\njawap = qosu(10, 20)\nprint(jawap)  # 30\n\ndef selem(at="Досым"):\n    print(f"Сәлем, {at}!")</div>`,tests:[{q:'Функция кілт сөзі?',opts:['function','func','def','define'],ans:2},{q:'Функцияны шақыру?',opts:['call f()','run f()','f()','start f()'],ans:2},{q:'return не жасайды?',opts:['Жариялайды','Мән қайтарады','Параметр','Шақырады'],ans:1},{q:'qosu(3,4)?',opts:['34','7','a+b','Қате'],ans:1},{q:'Параметр деген?',opts:['Функция аты','Берілетін мән','Нәтиже','Цикл'],ans:1},{q:'return жоқ болса?',opts:['0','False','None','Қате'],ans:2},{q:'"Досым" не?',opts:['Параметр','Аргумент','Default value','Айнымалы'],ans:2},{q:'Функция ішіндегі код?',opts:['{}','Шегіністер','begin..end','[]'],ans:1},{q:'"DRY" нені білдіреді?',opts:['Қысқарту','Қайталамау','Жылдам','Дұрыс атау'],ans:1},{q:'f(x)=x*2, f(5)?',opts:['5','52','10','Қате'],ans:2}],tips:{1:'def — функция жариялайды.',2:'f() — шақыру.',3:'return — мән қайтарады, тоқтатады.',4:'qosu(3,4): 3+4=7.',5:'Параметр — анықтамадағы айнымалы.',6:'return жоқ → None.',7:'Default value: f("Досым") — сол мән.',8:'Шегіністер — 4 бос орын.',9:"DRY — Don't Repeat Yourself.",10:'f(5): 5*2=10.'}},
+            {id:'3-5',title:'List (тізім) және онымен жұмыс',videoId:'134PaIeR9zdBsxxFd4lrQpFEnD2SOq90-',notes:`<h3>📋 Тізімдер (List)</h3><div class="note-highlight"><span>💡</span><span>Python тізімдері динамикалық. Индекстеу 0-ден басталады!</span></div><div class="code-block">zh = ["алма","банан","жүзім"]\nprint(zh[0])   # алма\nprint(zh[-1])  # жүзім\nzh.append("апельсин")\nzh.sort()\nprint(len(zh))</div>`,tests:[{q:'Тізімді белгілеу жақшасы?',opts:['()','{}','[]','<>'],ans:2},{q:'[10,20,30][0]?',opts:['20','30','10','Қате'],ans:2},{q:'[10,20,30][-1]?',opts:['10','20','30','Қате'],ans:2},{q:'Соңына элемент қосу?',opts:['add()','push()','append()','insert()'],ans:2},{q:'remove(5) не жасайды?',opts:['5-ші индекс','Алғашқы 5 мәнін','Барлық 5','Соңғы'],ans:1},{q:'len([1,2,3,4,5])?',opts:['4','5','6','0'],ans:1},{q:'[3,1,4,2].sort()?',opts:['[3,1,4,2]','[4,3,2,1]','[1,2,3,4]','Қате'],ans:2},{q:'[1,2,3][1:3]?',opts:['[1,2]','[2,3]','[1,2,3]','[3]'],ans:1},{q:'5 in [1,3,5,7]?',opts:['False','True','5','Қате'],ans:1},{q:'pop() не?',opts:['Бірінші','Соңғы алып жояды','Тазалайды','Қосады'],ans:1}],tips:{1:'[] жақша: my_list=[1,2,3].',2:'Индекс 0-ден: [10,20,30][0]=10.',3:'Теріс: [-1] соңғы.',4:'append() соңына қосады.',5:'remove(мән) алғашқы.',6:'len() санын береді.',7:'sort() кіші→үлкен.',8:'[1:3] → индекс 1,2.',9:'"in" бар-жоғын тексереді.',10:'pop() соңғыны алады+өшіреді.'}}
+        ]
+    }
+];
+
+// ===== STATE =====
+let completedLessons = new Set();
+let openModules = new Set([0]);
+let activeLesson = null;
+let answers = {};
+let submitted = {};
+
+// ===== HELPERS =====
+function isLessonUnlocked(mIdx, lIdx) {
+    if (mIdx === 0 && lIdx === 0) return true;
+    if (lIdx > 0) return completedLessons.has(MODULES[mIdx].lessons[lIdx - 1].id);
+    return MODULES[mIdx - 1].lessons.every(l => completedLessons.has(l.id));
+}
+function getNextLesson(mIdx, lIdx) {
+    if (lIdx + 1 < MODULES[mIdx].lessons.length) return { mIdx, lIdx: lIdx + 1 };
+    if (mIdx + 1 < MODULES.length) return { mIdx: mIdx + 1, lIdx: 0 };
+    return null;
+}
+
+// ===== BUILD UI =====
+function buildModules() {
+    const container = document.getElementById('modules-list');
+    container.innerHTML = '';
+    MODULES.forEach((mod, mIdx) => {
+        const isModLocked = mIdx > 0 && !MODULES[mIdx - 1].lessons.every(l => completedLessons.has(l.id));
+        const done = mod.lessons.filter(l => completedLessons.has(l.id)).length;
+        const pct = Math.round(done / mod.lessons.length * 100);
+        const isOpen = openModules.has(mIdx);
+        const card = document.createElement('div');
+        card.className = 'module-card' + (isOpen ? ' open' : '');
+        const chevronOrLock = isModLocked ? '<span class="lock-icon">🔒</span>' : `<span class="module-chevron">▾</span>`;
+        const headerClick = isModLocked ? '' : `onclick="toggleModule(${mIdx})"`;
+        card.innerHTML = `
+            <div class="module-header" ${headerClick} style="${isModLocked ? 'cursor:default;opacity:0.5' : ''}">
+                <div class="module-num ${mod.numClass}">${mod.num}</div>
+                <div class="module-info">
+                    <div class="module-title">${mod.title}</div>
+                    <div class="module-sub">${mod.subtitle}</div>
+                </div>
+                <div class="module-progress-mini">
+                    <div class="module-prog-bar"><div class="module-prog-fill" style="width:${pct}%"></div></div>
+                    <span class="module-prog-text">${done}/${mod.lessons.length}</span>
+                </div>
+                ${chevronOrLock}
+            </div>
+            <div class="lessons-body" id="lb-${mIdx}">
+                <div class="lessons-inner">${buildLessons(mod, mIdx)}</div>
+            </div>`;
+        container.appendChild(card);
+    });
+}
+function renderProgress() {
+    const completed = JSON.parse(localStorage.getItem('completedLessons')) || [];
+    console.log("Орындалған сабақтар тізімі:", completed); // Консольден тексеру үшін
+
+    completed.forEach(lessonId => {
+        // Түймелерді селектор арқылы дәл табамыз
+        const buttons = document.querySelectorAll(`button[onclick*="'${lessonId}'"]`);
+        buttons.forEach(btn => {
+            btn.classList.add('completed');
+            btn.innerHTML = "Өтілді ✓";
+            btn.style.backgroundColor = "#2ecc71";
+            btn.style.color = "white";
+        });
+    });
+}
+function buildLessons(mod, mIdx) {
+    return mod.lessons.map((lesson, lIdx) => {
+        const unlocked = isLessonUnlocked(mIdx, lIdx);
+        const done = completedLessons.has(lesson.id);
+        const isActive = activeLesson === lesson.id;
+        const badgeContent = done ? '✓' : (lIdx + 1);
+        let actionEl = done
+            ? '<span class="completed-badge">✔ Аяқталды</span>'
+            : unlocked
+                ? '<button class="start-btn">▶ Бастау</button>'
+                : '<span class="lock-icon">🔒</span>';
+        const rowClick = unlocked ? `onclick="toggleLesson('${lesson.id}')"` : '';
+        return `<div class="lesson-item${done ? ' done' : ''}${!unlocked ? ' locked-lesson' : ''}${isActive ? ' active' : ''}" id="li-${lesson.id}">
+            <div class="lesson-row" ${rowClick}>
+                <div class="lesson-num-badge">${badgeContent}</div>
+                <div class="lesson-title-text">${lesson.title}</div>
+                ${actionEl}
+            </div>
+            <div class="lesson-content" id="lc-${lesson.id}">${buildLessonContent(lesson, mIdx, lIdx)}</div>
+        </div>`;
+    }).join('');
+}
+
+function buildLessonContent(lesson, mIdx, lIdx) {
+    return `<div class="content-tabs">
+        <button class="tab-btn active" onclick="switchTab('${lesson.id}','notes',this)">📄 Конспект</button>
+        <button class="tab-btn" onclick="switchTab('${lesson.id}','video',this)">🎥 Видео</button>
+        <button class="tab-btn" onclick="switchTab('${lesson.id}','test',this)">📝 Тест</button>
+    </div>
+    <div class="tab-panel active" id="tp-${lesson.id}-notes">
+        <div class="notes-content">${lesson.notes}</div>
+        <div class="nav-btn-row">
+            <button class="nav-btn nav-btn-primary" onclick="switchTab('${lesson.id}','video',document.querySelector('#lc-${lesson.id} .tab-btn:nth-child(2)'))">🎥 Видеоны қарау →</button>
+        </div>
+    </div>
+    <div class="tab-panel" id="tp-${lesson.id}-video">
+        <div class="video-wrap"><iframe src="https://drive.google.com/file/d/${lesson.videoId}/preview" allowfullscreen></iframe></div>
+        <div class="nav-btn-row">
+            <button class="nav-btn nav-btn-primary" onclick="switchTab('${lesson.id}','test',document.querySelector('#lc-${lesson.id} .tab-btn:nth-child(3)'))">📝 Тестке өту →</button>
+        </div>
+    </div>
+    <div class="tab-panel" id="tp-${lesson.id}-test">${buildTest(lesson, mIdx, lIdx)}</div>`;
+}
+
+function buildTest(lesson, mIdx, lIdx) {
+    const totalQ = lesson.tests.length;
+    const qs = lesson.tests.map((t, qi) => {
+        const opts = t.opts.map((o, oi) => {
+            let cls = 'option-btn';
+            if (submitted[lesson.id]) {
+                if (oi === t.ans) cls += ' correct';
+                else if (answers[lesson.id] && answers[lesson.id][qi] === oi) cls += ' wrong';
+            } else if (answers[lesson.id] && answers[lesson.id][qi] === oi) {
+                cls += ' selected';
+            }
+            const dis = submitted[lesson.id] ? 'disabled' : '';
+            return `<button id="opt-${lesson.id}-${qi}-${oi}" class="${cls}" onclick="selectOpt('${lesson.id}',${qi},${oi},${t.ans},${totalQ})" ${dis}><span class="option-key">${['A','B','C','D'][oi]}</span>${o}</button>`;
+        }).join('');
+        return `<div class="test-question">
+            <div class="test-q-num">Сұрақ ${qi + 1}</div>
+            <div class="test-q-text">${t.q}</div>
+            <div class="options-grid">${opts}</div>
+        </div>`;
+    }).join('');
+    const answered = answers[lesson.id] ? Object.keys(answers[lesson.id]).length : 0;
+    const subDis = (submitted[lesson.id] || answered < totalQ) ? 'disabled' : '';
+    let resultHtml = submitted[lesson.id]
+        ? buildResultHtml(lesson, mIdx, lIdx, getCorrectCount(lesson), getCorrectCount(lesson) >= 5, true)
+        : `<div class="test-result" id="tres-${lesson.id}"></div>`;
+    return `<div class="test-section" id="test-${lesson.id}">
+        ${qs}
+        <button class="test-submit-btn" id="tsub-${lesson.id}" onclick="submitTest('${lesson.id}',${mIdx},${lIdx})" ${subDis}>Жауаптарды тексеру ✓</button>
+        ${resultHtml}
+    </div>`;
+}
+
+function getCorrectCount(lesson) {
+    let c = 0;
+    lesson.tests.forEach((t, qi) => {
+        if (answers[lesson.id] && answers[lesson.id][qi] === t.ans) c++;
+    });
+    return c;
+}
+
+function buildResultHtml(lesson, mIdx, lIdx, correct, pass, isStatic) {
+    const total = lesson.tests.length;
+    const nextLesson = getNextLesson(mIdx, lIdx);
+    let feedbackHtml = '';
+    if (!pass) {
+        const items = lesson.tests.map((t, qi) => {
+            const chosen = answers[lesson.id] ? answers[lesson.id][qi] : undefined;
+            if (chosen === undefined || chosen === t.ans) return '';
+            const tip = lesson.tips && lesson.tips[qi + 1] ? lesson.tips[qi + 1] : '';
+            return `<div class="feedback-item">
+                <div class="feedback-q">${qi + 1}. ${t.q}</div>
+                <div class="feedback-wrong">❌ ${t.opts[chosen]}</div>
+                <div class="feedback-correct">✅ ${t.opts[t.ans]}</div>
+                ${tip ? `<div class="feedback-tip">💡 ${tip}</div>` : ''}
+            </div>`;
+        }).filter(Boolean).join('');
+        if (items) feedbackHtml = `<div class="feedback-section"><div class="feedback-header">📚 Қайталау керек жерлер:</div>${items}</div>`;
+    }
+    const nextBtn = (pass && nextLesson)
+        ? `<button class="nav-btn nav-btn-green" style="margin-top:12px;width:100%;justify-content:center;" onclick="goToNextLesson(${nextLesson.mIdx},${nextLesson.lIdx})">Келесі сабақ: ${MODULES[nextLesson.mIdx].lessons[nextLesson.lIdx].title} →</button>`
+        : '';
+    const retryBtn = !pass ? `<button class="retry-btn" onclick="retryTest('${lesson.id}',${mIdx},${lIdx})">🔄 Қайта тапсыру</button>` : '';
+    return `<div class="test-result ${pass ? 'pass' : 'fail'}" ${isStatic ? 'style="display:block"' : ''} id="tres-${lesson.id}">
+        <div class="result-score">${correct}/${total}</div>
+        <div class="result-title">${pass ? '🎉 Керемет! Сіз өттіңіз!' : '💪 Қайта тырысыңыз'}</div>
+        <div class="result-sub">${pass ? 'Келесі сабаққа өтуге болады!' : `${total - correct} сұраққа қате жауап. Конспектті қайта оқыңыз.`}</div>
+        ${retryBtn}${feedbackHtml}${nextBtn}
+    </div>`;
+}
+
+// ===== INTERACTIONS =====
+function goToNextLesson(mIdx, lIdx) {
+    const lesson = MODULES[mIdx].lessons[lIdx];
+    openModules.add(mIdx);
+    activeLesson = lesson.id;
+    buildModules();
+    setTimeout(() => {
+        const el = document.getElementById('li-' + lesson.id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+}
+function toggleModule(mIdx) {
+    openModules.has(mIdx) ? openModules.delete(mIdx) : openModules.add(mIdx);
+    buildModules();
+}
+function toggleLesson(lid) {
+    activeLesson = (activeLesson === lid) ? null : lid;
+    MODULES.forEach((mod, mIdx) => { mod.lessons.forEach(l => { if (l.id === lid) openModules.add(mIdx); }); });
+    buildModules();
+    if (activeLesson) {
+        setTimeout(() => {
+            const el = document.getElementById('li-' + lid);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+}
+function switchTab(lid, tab, btn) {
+    const content = document.getElementById('lc-' + lid);
+    if (!content) return;
+    content.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    content.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById(`tp-${lid}-${tab}`);
+    if (panel) panel.classList.add('active');
+    if (btn && btn.classList) btn.classList.add('active');
+}
+function selectOpt(lid, qi, oi, ans, totalQ) {
+    if (submitted[lid]) return;
+    if (!answers[lid]) answers[lid] = {};
+    const lesson = MODULES.flatMap(m => m.lessons).find(l => l.id === lid);
+    const numQ = lesson ? lesson.tests.length : totalQ;
+    if (answers[lid][qi] === oi) {
+        delete answers[lid][qi];
+        document.getElementById(`opt-${lid}-${qi}-${oi}`)?.classList.remove('selected');
+        const subBtn = document.getElementById(`tsub-${lid}`);
+        if (subBtn) subBtn.disabled = true;
+        return;
+    }
+    if (answers[lid][qi] !== undefined) {
+        document.getElementById(`opt-${lid}-${qi}-${answers[lid][qi]}`)?.classList.remove('selected');
+    }
+    answers[lid][qi] = oi;
+    document.getElementById(`opt-${lid}-${qi}-${oi}`)?.classList.add('selected');
+    const subBtn = document.getElementById(`tsub-${lid}`);
+    if (subBtn && Object.keys(answers[lid]).length >= numQ) subBtn.disabled = false;
+}
+function submitTest(lid, mIdx, lIdx) {
+    if (submitted[lid]) return;
+    submitted[lid] = true;
+    const lesson = MODULES[mIdx].lessons[lIdx];
+    let correct = 0;
+    lesson.tests.forEach((t, qi) => {
+        const chosen = answers[lid] ? answers[lid][qi] : undefined;
+        for (let oi = 0; oi < t.opts.length; oi++) {
+            const btn = document.getElementById(`opt-${lid}-${qi}-${oi}`);
+            if (!btn) continue;
+            btn.disabled = true;
+            if (oi === t.ans) btn.classList.add('correct');
+            else if (chosen !== undefined && chosen === oi) btn.classList.add('wrong');
+        }
+        if (chosen === t.ans) correct++;
+    });
+    const subBtn = document.getElementById(`tsub-${lid}`);
+    if (subBtn) subBtn.disabled = true;
+    const pass = correct >= 5;
+    const resultEl = document.getElementById(`tres-${lid}`);
+    if (resultEl) {
+        resultEl.outerHTML = buildResultHtml(lesson, mIdx, lIdx, correct, pass, false);
+        const newRes = document.getElementById(`tres-${lid}`);
+        if (newRes) { newRes.style.display = 'block'; newRes.className = 'test-result ' + (pass ? 'pass' : 'fail'); }
+    }
+    if (pass) {
+        completedLessons.add(lid);
+        updateProgress();
+        setTimeout(buildModules, 300);
+    }
+    debouncedSave();
+}
+function retryTest(lid, mIdx, lIdx) {
+    submitted[lid] = false;
+    answers[lid] = {};
+    debouncedSave();
+    const panel = document.getElementById(`tp-${lid}-test`);
+    if (panel) panel.innerHTML = buildTest(MODULES[mIdx].lessons[lIdx], mIdx, lIdx);
+}
+
+// Initial render (before auth)
+buildModules();
+updateProgress();
+</script>
+</body>
+</html>
